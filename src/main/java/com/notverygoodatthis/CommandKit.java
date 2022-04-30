@@ -14,7 +14,11 @@ public class CommandKit implements CommandExecutor {
             if(label.length() != 0) {
                 try {
                     Player target = Bukkit.getPlayerExact(args[0]);
-
+                    if(target != null && playerSender.getStatistic(Statistic.DEATHS) < SMPlugin.MAX_LIVES - 1) {
+                        Bukkit.getBanList(BanList.Type.NAME).pardon(target.getDisplayName());
+                        target.setStatistic(Statistic.DEATHS, 0);
+                        playerSender.sendMessage(target.getDisplayName() + " has been revived.");
+                    }
                 } catch (NullPointerException e) {
                     OfflinePlayer target = Bukkit.getPlayerExact(args[0]);
                     if(target == null) {
@@ -22,7 +26,10 @@ public class CommandKit implements CommandExecutor {
                     } else if(target != null && playerSender.getStatistic(Statistic.DEATHS) < SMPlugin.MAX_LIVES - 1) {
                         Bukkit.getBanList(BanList.Type.NAME).pardon(target.getName());
                         target.setStatistic(Statistic.DEATHS, 0);
-
+                        playerSender.sendMessage("That player has been revived");
+                    }
+                    else {
+                        playerSender.sendMessage("An error ocurred while processing your request. You either typed the name wrong or the player does not need a revival");
                     }
                 }
 
