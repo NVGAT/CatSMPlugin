@@ -1,0 +1,27 @@
+name: SMPlugin
+version: '${project.version}'
+main: com.notverygoodatthis.SMPlugin
+api-version: 1.18
+authors: [ NotVeryGoodAtThis ]
+description: The CatSMP plugin
+
+commands:
+  catrevive:
+    description: Revive a dead player
+    usage: /<command>
+
+  deposit:
+    description: Deposit some of your own lives
+    usage: /<command>
+
+  reset:
+    description: Reset a player's lives (OPERATOR ONLY)
+    usage: /<command>
+
+  catlives:
+    description: Get the number of lives a player has
+    usage: /<command>
+
+  catset:
+    description: Set the amount of lives a player has (OPERATOR ONLY)
+    usage: /<command>
