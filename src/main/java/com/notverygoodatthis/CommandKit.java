@@ -12,27 +12,15 @@ public class CommandKit implements CommandExecutor {
         if(sender instanceof Player) {
             Player playerSender = (Player) sender;
             if(label.length() != 0) {
+                String revivalName = args[0];
+                Bukkit.getLogger().info("the name of the provided player is " + revivalName);
                 try {
-                    Player target = Bukkit.getPlayerExact(args[0]);
-                    if(target != null && playerSender.getStatistic(Statistic.DEATHS) < SMPlugin.MAX_LIVES - 1) {
-                        Bukkit.getBanList(BanList.Type.NAME).pardon(target.getDisplayName());
-                        target.setStatistic(Statistic.DEATHS, 0);
-                        playerSender.sendMessage(target.getDisplayName() + " has been revived.");
-                    }
-                } catch (NullPointerException e) {
-                    OfflinePlayer target = Bukkit.getPlayerExact(args[0]);
-                    if(target == null) {
-                        playerSender.sendMessage("That player has never player on this server");
-                    } else if(target != null && playerSender.getStatistic(Statistic.DEATHS) < SMPlugin.MAX_LIVES - 1) {
-                        Bukkit.getBanList(BanList.Type.NAME).pardon(target.getName());
-                        target.setStatistic(Statistic.DEATHS, 0);
-                        playerSender.sendMessage("That player has been revived");
-                    }
-                    else {
-                        playerSender.sendMessage("An error ocurred while processing your request. You either typed the name wrong or the player does not need a revival");
-                    }
+                    Bukkit.getBanList(BanList.Type.NAME).pardon(revivalName);
+                    playerSender.getInventory().getItemInMainHand().setAmount(playerSender.getInventory().getItemInMainHand().getAmount() - 1);
+                    playerSender.sendMessage(revivalName + " has been successfully revived. If there is a bug or you made a typo contact NotVeryGoodAtThis#8575 on Discord.");
+                } catch(NullPointerException e) {
+                    playerSender.sendMessage("That player either hasn't been online on this server at all or they don't need a revival.");
                 }
-
             }
         }
         return true;
