@@ -13,10 +13,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.naming.Name;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public final class SMPlugin extends JavaPlugin implements Listener {
     public static int MAX_LIVES = 5;
@@ -125,6 +129,14 @@ public final class SMPlugin extends JavaPlugin implements Listener {
         recipe.shape("LLL", "LIL", "I I");
         recipe.setIngredient('L', Material.LEATHER);
         recipe.setIngredient('I', Material.IRON_INGOT);
+        return recipe;
+    }
+
+    public ShapelessRecipe netherWart() {
+        ItemStack netherWart = new ItemStack(Material.NETHER_WART, 9);
+        NamespacedKey key = new NamespacedKey(this, "nether_wart");
+        ShapelessRecipe recipe = new ShapelessRecipe(key, netherWart);
+        recipe.addIngredient(Material.NETHER_WART);
         return recipe;
     }
 }

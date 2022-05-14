@@ -17,6 +17,8 @@ public class CommandKit implements CommandExecutor {
                 try {
                     Bukkit.getBanList(BanList.Type.NAME).pardon(revivalName);
                     playerSender.getInventory().getItemInMainHand().setAmount(playerSender.getInventory().getItemInMainHand().getAmount() - 1);
+                    OfflinePlayer revivalPlayer = Bukkit.getOfflinePlayer(revivalName);
+                    revivalPlayer.setStatistic(Statistic.DEATHS, 0);
                     playerSender.sendMessage(revivalName + " has been successfully revived. If there is a bug or you made a typo contact NotVeryGoodAtThis#8575 on Discord.");
                 } catch(NullPointerException e) {
                     playerSender.sendMessage("That player either hasn't been online on this server at all or they don't need a revival.");
