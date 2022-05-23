@@ -27,6 +27,14 @@ public final class SMPlugin extends JavaPlugin implements Listener {
     public static String LIFE_ITEM_NAME = "§a§lLife";
     List<String> items = new ArrayList<String>();
 
+    public ItemStack getLife(int amount) {
+        ItemStack life = new ItemStack(Material.FIREWORK_STAR, amount);
+        ItemMeta meta = life.getItemMeta();
+        meta.setDisplayName(LIFE_ITEM_NAME);
+        life.setItemMeta(meta);
+        return life;
+    }
+
     @Override
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(this, this);
@@ -49,6 +57,7 @@ public final class SMPlugin extends JavaPlugin implements Listener {
         this.getCommand("reset").setExecutor(new ResetCommand());
         this.getCommand("catlives").setExecutor(new GetCommand());
         this.getCommand("catset").setExecutor(new SetCommand());
+        this.getCommand("catkit").setExecutor(new KitCommand());
     }
 
     @EventHandler
@@ -71,17 +80,48 @@ public final class SMPlugin extends JavaPlugin implements Listener {
             getLogger().info(String.valueOf(player.getStatistic(Statistic.DEATHS)));
             if(player.getStatistic(Statistic.DEATHS) > MAX_LIVES - 1) {
                 Bukkit.broadcastMessage(player.getDisplayName() + " has lost all of their lives. They will be banned until someone revives them.");
+                player.getWorld().dropItemNaturally(player.getLocation(), getLife(1));
                 Random random = new Random();
                 int randInt = random.nextInt(items.size());
-                ItemStack randMat = new ItemStack(Material.matchMaterial(items.get(randInt)));
-                ItemMeta meta = randMat.getItemMeta();
-                switch (randMat.getType()) {
+                ItemStack randItem = new ItemStack(Material.getMaterial(items.get(randInt)));
+                switch (randItem.getType()) {
                     case NETHERITE_CHESTPLATE:
-                        meta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 5, true);
-                        meta.addEnchant(Enchantment.DURABILITY, 3, true);
-                        randMat.setItemMeta(meta);
+                    case NETHERITE_LEGGINGS:
+                        randItem.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 6);
+                        randItem.addUnsafeEnchantment(Enchantment.DURABILITY, 5);
+                        randItem.addUnsafeEnchantment(Enchantment.MENDING, 2);
                         break;
+                    case NETHERITE_SWORD:
+                        randItem.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 6);
+                        randItem.addUnsafeEnchantment(Enchantment.LOOT_BONUS_MOBS, 5);
+                        randItem.addUnsafeEnchantment(Enchantment.FIRE_ASPECT, 5);
+                        randItem.addUnsafeEnchantment(Enchantment.DURABILITY, 4);
+                        randItem.addUnsafeEnchantment(Enchantment.SWEEPING_EDGE, 4);
+                        randItem.addUnsafeEnchantment(Enchantment.MENDING, 2);
+                        break;
+                    case NETHERITE_AXE:
+                        randItem.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 6);
+                        randItem.addUnsafeEnchantment(Enchantment.DIG_SPEED, 10);
+                        randItem.addUnsafeEnchantment(Enchantment.LOOT_BONUS_BLOCKS, 5);
+                        randItem.addUnsafeEnchantment(Enchantment.MENDING, 2);
+                        break;
+                    case NETHERITE_HELMET:
+                        randItem.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 6);
+                        randItem.addUnsafeEnchantment(Enchantment.DURABILITY, 5);
+                        randItem.addUnsafeEnchantment(Enchantment.MENDING, 2);
+                        randItem.addUnsafeEnchantment(Enchantment.OXYGEN, 5);
+                        randItem.addUnsafeEnchantment(Enchantment.WATER_WORKER, 1);
+                        break;
+                    case NETHERITE_BOOTS:
+                        randItem.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 6);
+                        randItem.addUnsafeEnchantment(Enchantment.DURABILITY, 5);
+                        randItem.addUnsafeEnchantment(Enchantment.MENDING, 2);
+                        randItem.addUnsafeEnchantment(Enchantment.PROTECTION_FALL, 6);
+                        randItem.addUnsafeEnchantment(Enchantment.DEPTH_STRIDER, 5);
+                        break;
+
                 }
+                player.getWorld().dropItemNaturally(player.getLocation(), randItem);
                 Bukkit.getBanList(BanList.Type.NAME).addBan(player.getDisplayName(), "You have lost all of your lives. Thank you for playing on Cat SMP.", null, "Server");
                 player.kickPlayer("You have lost all of your lives. Thank you for playing on Cat SMP.");
             }
@@ -116,8 +156,9 @@ public final class SMPlugin extends JavaPlugin implements Listener {
         ItemStack enchantedApple = new ItemStack(Material.ENCHANTED_GOLDEN_APPLE);
         NamespacedKey key = new NamespacedKey(this, "enchanted_golden_apple");
         ShapedRecipe recipe = new ShapedRecipe(key, enchantedApple);
-        recipe.shape("GGG", "GAG", "GGG");
-        recipe.setIngredient('G', Material.GOLD_BLOCK);
+        recipe.shape("NDN", "DAD", "NDN");
+        recipe.setIngredient('N', Material.NETHERITE_INGOT);
+        recipe.setIngredient('D', Material.DIAMOND_BLOCK);
         recipe.setIngredient('A', Material.APPLE);
         return recipe;
     }

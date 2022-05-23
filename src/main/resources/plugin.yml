@@ -25,3 +25,7 @@ commands:
   catset:
     description: Set the amount of lives a player has (OPERATOR ONLY)
     usage: /<command>
+
+  catkit:
+    description: Kits you out full Cat SMP style!
+    usage: /<command>
