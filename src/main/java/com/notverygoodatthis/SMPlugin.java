@@ -16,6 +16,8 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import javax.naming.Name;
 import java.awt.*;
@@ -25,7 +27,16 @@ import java.util.List;
 public final class SMPlugin extends JavaPlugin implements Listener {
     public static int MAX_LIVES = 5;
     public static String LIFE_ITEM_NAME = "§a§lLife";
+    public static String SPEED_ITEM_NAME = "§r§f§lSpeed";
     List<String> items = new ArrayList<String>();
+
+    public ItemStack getSpeed(int amount) {
+        ItemStack speed = new ItemStack(Material.SUGAR, amount);
+        ItemMeta meta = speed.getItemMeta();
+        meta.setDisplayName(SPEED_ITEM_NAME);
+        speed.setItemMeta(meta);
+        return speed;
+    }
 
     public ItemStack getLife(int amount) {
         ItemStack life = new ItemStack(Material.FIREWORK_STAR, amount);
@@ -67,6 +78,10 @@ public final class SMPlugin extends JavaPlugin implements Listener {
             ItemStack itemInHand = player.getInventory().getItemInMainHand();
             if(itemInHand.getType() == Material.FIREWORK_STAR && itemInHand.getItemMeta().getDisplayName().equals(LIFE_ITEM_NAME)) {
                 player.setStatistic(Statistic.DEATHS, player.getStatistic(Statistic.DEATHS) - 1);
+                player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
+            }
+            if(itemInHand.getType() == Material.SUGAR && itemInHand.getItemMeta().getDisplayName().equals(SPEED_ITEM_NAME)) {
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 12000, 3));
                 player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
             }
         }
@@ -170,6 +185,16 @@ public final class SMPlugin extends JavaPlugin implements Listener {
         recipe.shape("LLL", "LIL", "I I");
         recipe.setIngredient('L', Material.LEATHER);
         recipe.setIngredient('I', Material.IRON_INGOT);
+        return recipe;
+    }
+
+    public ShapedRecipe speedRecipe() {
+        ItemStack speed = getSpeed(1);
+        NamespacedKey key = new NamespacedKey(this, "sugar");
+        ShapedRecipe recipe = new ShapedRecipe(key, speed);
+        recipe.shape("SBS", "BBB", "SBS");
+        recipe.setIngredient('S', Material.SUGAR);
+        recipe.setIngredient('B', Material.DIAMOND_BLOCK);
         return recipe;
     }
 
