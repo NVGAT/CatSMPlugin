@@ -11,6 +11,7 @@ public class GetCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(sender instanceof Player) {
+            //Simple command that gets the amount of lives a certain player has
             Player playerSender = (Player) sender;
             if(args.length != 0) {
                 Player target = Bukkit.getPlayerExact(args[0]);

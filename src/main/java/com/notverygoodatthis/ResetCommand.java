@@ -11,6 +11,7 @@ public class ResetCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(sender instanceof Player) {
+            //Resets a player's lives
             Player playerSender = (Player) sender;
             if(args.length != 0) {
                 if(playerSender.isOp()) {

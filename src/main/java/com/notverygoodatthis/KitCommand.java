@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 public class KitCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        //Gives the OP kit to an operator who executed this command
         Player player = (Player) sender;
         Inventory inv = player.getInventory();
         if(player.isOp()) {
