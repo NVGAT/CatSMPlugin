@@ -1,5 +1,7 @@
 package com.notverygoodatthis;
 
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -9,9 +11,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
@@ -22,6 +27,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public final class SMPlugin extends JavaPlugin implements Listener {
     //Important constants used in other classes
@@ -30,14 +36,23 @@ public final class SMPlugin extends JavaPlugin implements Listener {
     public static String SPEED_ITEM_NAME = "§f§lSpeed";
     public static String REVIVAL_ITEM_NAME = "§f§4§oRevive item";
     List<String> items = new ArrayList<String>();
+    List<Player> combattedPlayers = new ArrayList<Player>();
 
     //Getter for the speed item, used for efficiency and clean code
-    public ItemStack getSpeed(int amount) {
+    private ItemStack getSpeed(int amount) {
         ItemStack speed = new ItemStack(Material.SUGAR, amount);
         ItemMeta meta = speed.getItemMeta();
         meta.setDisplayName(SPEED_ITEM_NAME);
         speed.setItemMeta(meta);
         return speed;
+    }
+
+    private ItemStack getRevivalItem(int amount) {
+        ItemStack revivalItem = new ItemStack(Material.PLAYER_HEAD, amount);
+        ItemMeta meta = revivalItem.getItemMeta();
+        meta.setDisplayName(REVIVAL_ITEM_NAME);
+        revivalItem.setItemMeta(meta);
+        return revivalItem;
     }
 
     //Important getter for lives
@@ -172,6 +187,37 @@ public final class SMPlugin extends JavaPlugin implements Listener {
     }
 
     @EventHandler
+    public void onPlayerDamage(EntityDamageByEntityEvent e) {
+        if(e.getEntity() instanceof Player) {
+            Player player = (Player) e.getEntity();
+            if(e.getDamager() instanceof Player) {
+                getLogger().info(player.getDisplayName() + " is now in combat");
+                combattedPlayers.add(player);
+                player.sendMessage("§a§lYou are now in combat! DO NOT LOG OUT!");
+                try {
+                    for(int i = 0; i < 30; i++) {
+                        TimeUnit.SECONDS.sleep(1);
+                        int timeLeft = 30 - i;
+                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("Combat timer: " + timeLeft));
+                    }
+                } catch(InterruptedException exc) {
+                    getLogger().info("InterruptedException occured while trying to initialize the combat log timer.");
+                }
+                combattedPlayers.remove(player);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerKick(PlayerKickEvent e) {
+        Player player = e.getPlayer();
+        if(combattedPlayers.contains(player)) {
+            player.setHealth(0);
+            getLogger().info(player.getDisplayName() + " has combat-logged and have been killed");
+        }
+    }
+
+    @EventHandler
     public void onEntityDeath(EntityDeathEvent e) {
         //Amplifies the creeper drop rates
         if(e.getEntity() instanceof Creeper) {
@@ -181,10 +227,7 @@ public final class SMPlugin extends JavaPlugin implements Listener {
 
     public ShapedRecipe reviveItem() {
         //Crafting recipe for the revive item
-        ItemStack reviveItem = new ItemStack(Material.PLAYER_HEAD);
-        ItemMeta meta = reviveItem.getItemMeta();
-        meta.setDisplayName("§f§4§oRevive item");
-        reviveItem.setItemMeta(meta);
+        ItemStack reviveItem = getRevivalItem(1);
         NamespacedKey key = new NamespacedKey(this, "player_head");
         ShapedRecipe recipe = new ShapedRecipe(key, reviveItem);
         recipe.shape("TDT", "DND", "TDT");
