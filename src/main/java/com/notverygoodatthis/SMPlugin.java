@@ -5,18 +5,21 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
@@ -24,6 +27,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 import java.util.List;
@@ -34,9 +39,10 @@ public final class SMPlugin extends JavaPlugin implements Listener {
     public static int MAX_LIVES = 5;
     public static String LIFE_ITEM_NAME = "§a§lLife";
     public static String SPEED_ITEM_NAME = "§f§lSpeed";
-    public static String REVIVAL_ITEM_NAME = "§f§4§oRevive item";
+    public static String REVIVAL_ITEM_NAME = "§4§oRevive item";
     List<String> items = new ArrayList<String>();
     List<Player> combattedPlayers = new ArrayList<Player>();
+    List<Integer> currentRunnableID = new ArrayList<Integer>();
 
     //Getter for the speed item, used for efficiency and clean code
     private ItemStack getSpeed(int amount) {
@@ -126,7 +132,7 @@ public final class SMPlugin extends JavaPlugin implements Listener {
         //Checks if the entity that killed the player is a player
         Player player = e.getEntity();
         Entity killer = player.getKiller();
-        if(killer instanceof Player) {
+        if(killer instanceof Player || e.getDeathMessage().equals(e.getEntity().getName() + " died")) {
             getLogger().info(String.valueOf(player.getStatistic(Statistic.DEATHS)));
             //Checks if the player lost all of their lives
             if(player.getStatistic(Statistic.DEATHS) > MAX_LIVES - 1) {
@@ -187,43 +193,13 @@ public final class SMPlugin extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onPlayerDamage(EntityDamageByEntityEvent e) {
-        if(e.getEntity() instanceof Player) {
-            Player player = (Player) e.getEntity();
-            if(e.getDamager() instanceof Player) {
-                getLogger().info(player.getDisplayName() + " is now in combat");
-                combattedPlayers.add(player);
-                player.sendMessage("§a§lYou are now in combat! DO NOT LOG OUT!");
-                try {
-                    for(int i = 0; i < 30; i++) {
-                        TimeUnit.SECONDS.sleep(1);
-                        int timeLeft = 30 - i;
-                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("Combat timer: " + timeLeft));
-                    }
-                } catch(InterruptedException exc) {
-                    getLogger().info("InterruptedException occured while trying to initialize the combat log timer.");
-                }
-                combattedPlayers.remove(player);
-            }
-        }
-    }
-
-    @EventHandler
-    public void onPlayerKick(PlayerKickEvent e) {
-        Player player = e.getPlayer();
-        if(combattedPlayers.contains(player)) {
-            player.setHealth(0);
-            getLogger().info(player.getDisplayName() + " has combat-logged and have been killed");
-        }
-    }
-
-    @EventHandler
     public void onEntityDeath(EntityDeathEvent e) {
         //Amplifies the creeper drop rates
         if(e.getEntity() instanceof Creeper) {
             e.getEntity().getWorld().dropItemNaturally(e.getEntity().getLocation(), new ItemStack(Material.GUNPOWDER, 5));
         }
     }
+
 
     public ShapedRecipe reviveItem() {
         //Crafting recipe for the revive item

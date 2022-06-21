@@ -7,6 +7,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import static org.bukkit.Bukkit.getLogger;
+
 public class CommandKit implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -16,11 +18,13 @@ public class CommandKit implements CommandExecutor {
             if(label.length() != 0) {
                 String revivalName = args[0];
                 //Logs the revived player's name
-                Bukkit.getLogger().info("the name of the provided player is " + revivalName);
+                getLogger().info("the name of the provided player is " + revivalName);
+                getLogger().info("Held item name: " + playerSender.getInventory().getItemInMainHand().getItemMeta().getDisplayName());
+                getLogger().info("Revival item name: " + SMPlugin.REVIVAL_ITEM_NAME);
                 try {
                     //Checks if the currently held item is the revival item
                     ItemStack heldItem = playerSender.getInventory().getItemInMainHand();
-                    if(heldItem.getType() == Material.PLAYER_HEAD && heldItem.getItemMeta().getDisplayName() == SMPlugin.REVIVAL_ITEM_NAME) {
+                    if(heldItem.getType() == Material.PLAYER_HEAD && heldItem.getItemMeta().getDisplayName().equals(SMPlugin.REVIVAL_ITEM_NAME)) {
                         //If it checks out, we unban the desired player
                         Bukkit.getBanList(BanList.Type.NAME).pardon(revivalName);
                         //We remove the used revival item
