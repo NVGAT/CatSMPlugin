@@ -29,3 +29,7 @@ commands:
   catkit:
     description: Kits you out full Cat SMP style! (OPERATOR ONLY)
     usage: /<command>
+
+  catcredits:
+    description: Gives all of the credits to the Cat SMP plugin
+    usage: /<command>

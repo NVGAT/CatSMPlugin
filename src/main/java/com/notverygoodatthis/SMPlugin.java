@@ -100,6 +100,7 @@ public final class SMPlugin extends JavaPlugin implements Listener {
         this.getCommand("catlives").setExecutor(new GetCommand());
         this.getCommand("catset").setExecutor(new SetCommand());
         this.getCommand("catkit").setExecutor(new KitCommand());
+        this.getCommand("catcredits").setExecutor(new CreditsCommand());
     }
 
     @EventHandler
