@@ -1,18 +1,20 @@
 package com.notverygoodatthis;
 
-            //*************************************\\
-           //************Cat SMP plugin*************\\
-          //*******Made by NotVeryGoodAtThis*********\\
-         //**Give credit if you use my code anywhere**\\
-        //***See credits.txt to see the tools I used***\\
-       //The comments should make the code easy to read.\\
-      //***Have fun! Tweak the code however you'd like***\\
-     //Once you're happy, run the project in IntelliJ IDEA\\
-    //It will create a JAR file in the folder named target!\\
-   //*******************************************************\\
-  //*****I'll try to make all of my plugins open-source.*****\\
- //****I just like the idea of people taking a deeper look****\\
-//*************************************************************\\
+              //*************************************\\
+             //************Cat SMP plugin*************\\
+            //*******Made by NotVeryGoodAtThis*********\\
+           //**Give credit if you use my code anywhere**\\
+          //***See credits.txt to see the tools I used***\\
+         //The comments should make the code easy to read.\\
+        //***Have fun! Tweak the code however you'd like***\\
+       //Once you're happy, run the project in IntelliJ IDEA\\
+      //It will create a JAR file in the folder named target!\\
+     //*******************************************************\\
+    //*****I'll try to make all of my plugins open-source.*****\\
+   //****I just like the idea of people taking a deeper look****\\
+  //*************************************************************\\
+ //*****I hope you have a lot of fun working with the code :)*****\\
+//*****************************************************************\\
 
 
 import org.bukkit.*;
@@ -76,16 +78,18 @@ public final class SMPlugin extends JavaPlugin implements Listener {
     }
 
     @Override
+    //The onEnable function fires when the plugin is first enabled in the Spigot server
     public void onEnable() {
         //Registers the event listeners
         Bukkit.getPluginManager().registerEvents(this, this);
         this.saveDefaultConfig();
 
-        //Loads the available-items config into the items list
+        //Loads the available-items and credits-message lists from the configuration file
         FileConfiguration config = this.getConfig();
         items = (List<String>) config.getList("available-items");
         creditsMessage = (List<String>) config.getList("credits-message");
 
+        //Registers the recipes and the commands
         registerRecipes();
         registerCommands();
     }
@@ -112,6 +116,7 @@ public final class SMPlugin extends JavaPlugin implements Listener {
     }
 
     @EventHandler
+    //PlayerInteractEvent is used to determine players clicking on anything
     public void onPlayerInteract(PlayerInteractEvent e) {
         if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             //Very long, kinda messy code to check if the item the player's holding is equal to the life item
@@ -201,7 +206,7 @@ public final class SMPlugin extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent e) {
-        //Amplifies the creeper drop rates
+        //Amplifies the creeper drop rates. If you don't want amplified drop rates, you can just remove this method
         if(e.getEntity() instanceof Creeper) {
             e.getEntity().getWorld().dropItemNaturally(e.getEntity().getLocation(), new ItemStack(Material.GUNPOWDER, 5));
         }

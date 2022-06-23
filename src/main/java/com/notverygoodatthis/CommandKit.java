@@ -27,8 +27,9 @@ public class CommandKit implements CommandExecutor {
                         Bukkit.getBanList(BanList.Type.NAME).pardon(revivalName);
                         //We remove the used revival item
                         playerSender.getInventory().getItemInMainHand().setAmount(playerSender.getInventory().getItemInMainHand().getAmount() - 1);
-                        //We reset the revived player's death count
+                        //We get the banned player through Bukkit
                         OfflinePlayer revivalPlayer = Bukkit.getOfflinePlayer(revivalName);
+                        //After that we reset their death counter to 0, effectively giving them 5 lives all over again
                         revivalPlayer.setStatistic(Statistic.DEATHS, 0);
                         //Then we notify the command executor that the player has been successfully revived, and that if there are any issues to contact me on Discord
                         playerSender.sendMessage(revivalName + " has been successfully revived. If there is a bug or you made a typo contact NotVeryGoodAtThis#8575 on Discord.");

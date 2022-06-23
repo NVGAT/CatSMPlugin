@@ -1,8 +1,0 @@
-A plugin made by NotVeryGoodAtThis for the Cat SMP Minecraft server
-API used: SpigotMC
-IDE used: IntelliJ IDEA 2021.2.1
-IDE plugins used: Discord integration, Minecraft development
-Programming language: Java
-JDK version: 16
-Compiler: Apache Maven
-Version control: GitHub
