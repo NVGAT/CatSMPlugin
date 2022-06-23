@@ -1,0 +1,2 @@
+available-items: ["NETHERITE_CHESTPLATE", "NETHERITE_LEGGINGS", "NETHERITE_HELMET", "NETHERITE_BOOTS", "NETHERITE_SWORD", "NETHERITE_AXE"]
+credits-message: ["Cat SMP Plugin", "Creator: NotVeryGoodAtThis", "API used: Spigot", "IDE used: IntelliJ IDEA 2021.2.1", "IDE plugins used: Discord integration, Minecraft development", "Big thanks to everyone who encouraged me to make this plugin", "I'm NotVeryGoodAtThis", "Signing off"]

@@ -1,10 +1,18 @@
 package com.notverygoodatthis;
 
-    //*************************************\\
-   //************Cat SMP plugin*************\\
-  //*******Made by NotVeryGoodAtThis*********\\
- //*Give credit if you use my code anywhere!**\\
-//***See credits.txt to see the tools I used***\\
+            //*************************************\\
+           //************Cat SMP plugin*************\\
+          //*******Made by NotVeryGoodAtThis*********\\
+         //**Give credit if you use my code anywhere**\\
+        //***See credits.txt to see the tools I used***\\
+       //The comments should make the code easy to read.\\
+      //***Have fun! Tweak the code however you'd like***\\
+     //Once you're happy, run the project in IntelliJ IDEA\\
+    //It will create a JAR file in the folder named target!\\
+   //*******************************************************\\
+  //*****I'll try to make all of my plugins open-source.*****\\
+ //****I just like the idea of people taking a deeper look****\\
+//*************************************************************\\
 
 
 import org.bukkit.*;
@@ -37,9 +45,8 @@ public final class SMPlugin extends JavaPlugin implements Listener {
     public static String LIFE_ITEM_NAME = "§a§lLife";
     public static String SPEED_ITEM_NAME = "§f§lSpeed";
     public static String REVIVAL_ITEM_NAME = "§4§oRevive item";
+    public static List<String> creditsMessage = new ArrayList<String>();
     List<String> items = new ArrayList<String>();
-    List<Player> combattedPlayers = new ArrayList<Player>();
-    List<Integer> currentRunnableID = new ArrayList<Integer>();
 
     //Getter for the speed item, used for efficiency and clean code
     private ItemStack getSpeed(int amount) {
@@ -77,6 +84,7 @@ public final class SMPlugin extends JavaPlugin implements Listener {
         //Loads the available-items config into the items list
         FileConfiguration config = this.getConfig();
         items = (List<String>) config.getList("available-items");
+        creditsMessage = (List<String>) config.getList("credits-message");
 
         registerRecipes();
         registerCommands();
