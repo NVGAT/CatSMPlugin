@@ -17,11 +17,14 @@ public class SetCommand implements CommandExecutor {
             if(args.length != 0) {
                 if(playerSender.isOp()) {
                     try {
-                        //If the player is an operator and all the arguments are valid, we set the player's lives to the provided number
+                        //Gets the target player from the command input
                         Player target = Bukkit.getPlayerExact(args[0]);
+                        //Gets the amount of lives we need to give them based on the string provided in the command, which we parse to an integer
                         int newLives = Integer.parseInt(args[1]);
+                        //Then we set the deaths of the target to the max lives subtracted by the new lives integer
                         target.setStatistic(Statistic.DEATHS, SMPlugin.MAX_LIVES - newLives);
                         if(target.getStatistic(Statistic.DEATHS) < 5) {
+                            //If the player had more than 5 deaths, then we unban them
                             Bukkit.getBanList(BanList.Type.NAME).pardon(target.getDisplayName());
                         }
                         return true;

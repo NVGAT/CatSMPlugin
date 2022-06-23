@@ -7,11 +7,11 @@ description: The CatSMP plugin
 
 commands:
   catrevive:
-    description: Revive a dead player
+    description: Revive a dead player using a revival item
     usage: /<command>
 
   deposit:
-    description: Deposit some of your own lives
+    description: Deposit some of your own lives in an item form
     usage: /<command>
 
   reset:
@@ -19,13 +19,13 @@ commands:
     usage: /<command>
 
   catlives:
-    description: Get the number of lives a player has
+    description: Get the number of lives a certain player has
     usage: /<command>
 
   catset:
-    description: Set the amount of lives a player has (OPERATOR ONLY)
+    description: Set the amount of lives a certain player has (OPERATOR ONLY)
     usage: /<command>
 
   catkit:
-    description: Kits you out full Cat SMP style!
+    description: Kits you out full Cat SMP style! (OPERATOR ONLY)
     usage: /<command>

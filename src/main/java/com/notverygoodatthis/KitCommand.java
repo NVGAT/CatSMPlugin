@@ -16,6 +16,7 @@ public class KitCommand implements CommandExecutor {
         Player player = (Player) sender;
         Inventory inv = player.getInventory();
         if(player.isOp()) {
+            //OP helmet
             ItemStack helmet = new ItemStack(Material.NETHERITE_HELMET);
             helmet.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 6);
             helmet.addUnsafeEnchantment(Enchantment.DURABILITY, 5);
@@ -23,19 +24,22 @@ public class KitCommand implements CommandExecutor {
             helmet.addUnsafeEnchantment(Enchantment.OXYGEN, 5);
             helmet.addUnsafeEnchantment(Enchantment.WATER_WORKER, 1);
             inv.addItem(helmet);
-            
+
+            //OP chestplate
             ItemStack chestplate = new ItemStack(Material.NETHERITE_CHESTPLATE);
             chestplate.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 6);
             chestplate.addUnsafeEnchantment(Enchantment.DURABILITY, 5);
             chestplate.addUnsafeEnchantment(Enchantment.MENDING, 2);
             inv.addItem(chestplate);
-            
+
+            //OP leggings
             ItemStack leggings = new ItemStack(Material.NETHERITE_LEGGINGS);
             leggings.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 6);
             leggings.addUnsafeEnchantment(Enchantment.DURABILITY, 5);
             leggings.addUnsafeEnchantment(Enchantment.MENDING, 2);
             inv.addItem(leggings);
-            
+
+            //OP boots
             ItemStack boots = new ItemStack(Material.NETHERITE_BOOTS);
             boots.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 6);
             boots.addUnsafeEnchantment(Enchantment.DURABILITY, 5);
@@ -43,7 +47,9 @@ public class KitCommand implements CommandExecutor {
             boots.addUnsafeEnchantment(Enchantment.PROTECTION_FALL, 6);
             boots.addUnsafeEnchantment(Enchantment.DEPTH_STRIDER, 5);
             inv.addItem(boots);
-            
+
+
+            //OP sword
             ItemStack sword = new ItemStack(Material.NETHERITE_SWORD);
             sword.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 6);
             sword.addUnsafeEnchantment(Enchantment.LOOT_BONUS_MOBS, 5);
@@ -52,7 +58,8 @@ public class KitCommand implements CommandExecutor {
             sword.addUnsafeEnchantment(Enchantment.SWEEPING_EDGE, 4);
             sword.addUnsafeEnchantment(Enchantment.MENDING, 2);
             inv.addItem(sword);
-            
+
+            //OP axe
             ItemStack axe = new ItemStack(Material.NETHERITE_AXE);
             axe.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 6);
             axe.addUnsafeEnchantment(Enchantment.DIG_SPEED, 10);
@@ -62,6 +69,7 @@ public class KitCommand implements CommandExecutor {
 
             player.sendMessage("You are all kitted out!");
         } else {
+            //If someone discovers this command and tried to cheese the server, they will be denied because they are probably not operator on the SMP
             player.sendMessage("This is an operator only command");
         }
         return false;

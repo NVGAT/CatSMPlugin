@@ -1,11 +1,15 @@
 package com.notverygoodatthis;
 
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+    //*************************************\\
+   //************Cat SMP plugin*************\\
+  //*******Made by NotVeryGoodAtThis*********\\
+ //*Give credit if you use my code anywhere!**\\
+//***See credits.txt to see the tools I used***\\
+
+
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -13,13 +17,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
@@ -27,12 +27,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public final class SMPlugin extends JavaPlugin implements Listener {
     //Important constants used in other classes
@@ -53,6 +50,7 @@ public final class SMPlugin extends JavaPlugin implements Listener {
         return speed;
     }
 
+    //Getter for the revival item
     private ItemStack getRevivalItem(int amount) {
         ItemStack revivalItem = new ItemStack(Material.PLAYER_HEAD, amount);
         ItemMeta meta = revivalItem.getItemMeta();
@@ -197,6 +195,26 @@ public final class SMPlugin extends JavaPlugin implements Listener {
         //Amplifies the creeper drop rates
         if(e.getEntity() instanceof Creeper) {
             e.getEntity().getWorld().dropItemNaturally(e.getEntity().getLocation(), new ItemStack(Material.GUNPOWDER, 5));
+        }
+    }
+
+    @EventHandler
+    public void onBlockPlaced(BlockPlaceEvent e) {
+        //Event handler for when a block is placed
+        Player player = e.getPlayer();
+        ItemStack item = player.getInventory().getItemInMainHand();
+        //If the player is holding a revival item
+        if(item == getRevivalItem(item.getAmount())) {
+            //Then we unban the player whose name the skull had
+            Bukkit.getBanList(BanList.Type.NAME).pardon(item.getItemMeta().getDisplayName());
+            OfflinePlayer playerToRevive = Bukkit.getOfflinePlayer(item.getItemMeta().getDisplayName());
+            //We also reset their lives
+            playerToRevive.setStatistic(Statistic.DEATHS, 0);
+            //And send a message to the player who placed the skull
+            player.sendMessage(playerToRevive.getName() + " has been successfully revived. " +
+                    "If there was a misspelling or you think there was a bug, contact NotVeryGoodAtThis#8575 on Discord");
+            //Finally, we set the type of the skull block to air, effectively removing it
+            e.getBlock().setType(Material.AIR);
         }
     }
 

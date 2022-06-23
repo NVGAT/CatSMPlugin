@@ -19,8 +19,6 @@ public class CommandKit implements CommandExecutor {
                 String revivalName = args[0];
                 //Logs the revived player's name
                 getLogger().info("the name of the provided player is " + revivalName);
-                getLogger().info("Held item name: " + playerSender.getInventory().getItemInMainHand().getItemMeta().getDisplayName());
-                getLogger().info("Revival item name: " + SMPlugin.REVIVAL_ITEM_NAME);
                 try {
                     //Checks if the currently held item is the revival item
                     ItemStack heldItem = playerSender.getInventory().getItemInMainHand();
