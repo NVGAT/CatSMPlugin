@@ -1,7 +1,7 @@
 package com.notverygoodatthis;
 
               //*************************************\\
-             //************Cat SMP plugin*************\\
+             //***********Omega SMP plugin************\\
             //*******Made by NotVeryGoodAtThis*********\\
            //**Give credit if you use my code anywhere**\\
           //***See credits.txt to see the tools I used***\\
@@ -17,6 +17,7 @@ package com.notverygoodatthis;
 //*****************************************************************\\
 
 
+import dev.dbassett.skullcreator.SkullCreator;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -26,13 +27,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -40,7 +39,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 import java.util.List;
-
 public final class SMPlugin extends JavaPlugin implements Listener {
     //Important constants used in other classes
     public static int MAX_LIVES = 5;
@@ -60,8 +58,9 @@ public final class SMPlugin extends JavaPlugin implements Listener {
     }
 
     //Getter for the revival item
-    private ItemStack getRevivalItem(int amount) {
-        ItemStack revivalItem = new ItemStack(Material.PLAYER_HEAD, amount);
+    private static ItemStack getRevivalItem(int amount) {
+        //Uses the SkullCreator library to get a cool looking skull from base64
+        ItemStack revivalItem = SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTQ2MDdhZThhNmY5Mzc0MmU4ZWIxNmEwZjg2MjY1OWUzMDg3NjEwMTlhMzk3NzIyYzFhZmU4NGIxNzlkMWZhMiJ9fX0=");
         ItemMeta meta = revivalItem.getItemMeta();
         meta.setDisplayName(REVIVAL_ITEM_NAME);
         revivalItem.setItemMeta(meta);
@@ -75,6 +74,15 @@ public final class SMPlugin extends JavaPlugin implements Listener {
         meta.setDisplayName(LIFE_ITEM_NAME);
         life.setItemMeta(meta);
         return life;
+    }
+
+    //Getter for the ressurection fragment
+    public static ItemStack getRessurectionItem(int amount) {
+        ItemStack ressurectionItem = new ItemStack(Material.COCOA_BEANS, amount);
+        ItemMeta meta = ressurectionItem.getItemMeta();;
+        meta.setDisplayName("§b§lRessurection fragment");
+        ressurectionItem.setItemMeta(meta);
+        return ressurectionItem;
     }
 
     @Override
@@ -150,7 +158,8 @@ public final class SMPlugin extends JavaPlugin implements Listener {
             if(player.getStatistic(Statistic.DEATHS) > MAX_LIVES - 1) {
                 //Broadcasts a chat message and drops the life item, along with OP gear
                 Bukkit.broadcastMessage(player.getDisplayName() + " has lost all of their lives. They will be banned until someone revives them.");
-                player.getWorld().dropItemNaturally(player.getLocation(), getLife(1));
+                //Drops a ressurection fragment on the ground
+                player.getWorld().dropItemNaturally(player.getLocation(), getRessurectionItem(1));
                 //Gets a random piece of gear
                 Random random = new Random();
                 int randInt = random.nextInt(items.size());
@@ -213,22 +222,18 @@ public final class SMPlugin extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onBlockPlaced(BlockPlaceEvent e) {
-        //Event handler for when a block is placed
-        Player player = e.getPlayer();
-        ItemStack item = player.getInventory().getItemInMainHand();
-        //If the player is holding a revival item
-        if(item == getRevivalItem(item.getAmount())) {
-            //Then we unban the player whose name the skull had
-            Bukkit.getBanList(BanList.Type.NAME).pardon(item.getItemMeta().getDisplayName());
-            OfflinePlayer playerToRevive = Bukkit.getOfflinePlayer(item.getItemMeta().getDisplayName());
-            //We also reset their lives
-            playerToRevive.setStatistic(Statistic.DEATHS, 0);
-            //And send a message to the player who placed the skull
-            player.sendMessage(playerToRevive.getName() + " has been successfully revived. " +
-                    "If there was a misspelling or you think there was a bug, contact NotVeryGoodAtThis#8575 on Discord");
-            //Finally, we set the type of the skull block to air, effectively removing it
-            e.getBlock().setType(Material.AIR);
+    public void craftingEvent(PrepareItemCraftEvent e) {
+        CraftingInventory ci = e.getInventory();
+        try {
+            //We check if the recipe result has the revival item name
+            if(ci.getRecipe().getResult().getItemMeta().getDisplayName().equals(REVIVAL_ITEM_NAME)) {
+                //If the middle slot isn't a ressurection item, we set the result to air, or effectively nothing.
+                if(!ci.getMatrix()[4].getItemMeta().getDisplayName().equals("§b§lRessurection fragment")) {
+                    ci.setResult(new ItemStack(Material.AIR));
+                }
+            }
+        } catch(NullPointerException exception) {
+            //nothing here, just wanted to get rid of the errors
         }
     }
 
@@ -241,7 +246,7 @@ public final class SMPlugin extends JavaPlugin implements Listener {
         recipe.shape("TDT", "DND", "TDT");
         recipe.setIngredient('D', Material.DIAMOND_BLOCK);
         recipe.setIngredient('T', Material.TOTEM_OF_UNDYING);
-        recipe.setIngredient('N', Material.NETHERITE_INGOT);
+        recipe.setIngredient('N', Material.COCOA_BEANS);
         return recipe;
     }
 
